@@ -42,7 +42,7 @@ WHERE medical_record_number = 'MRN-1002';
 -- Tables involved: 1 (Patient)
 -- Description: Insert a new patient record.
 INSERT INTO Patient (patient_id, medical_record_number, birth_year, gender, blood_type)
-VALUES (9, 'MRN-1009', 1999, 'Female', 'AB+');
+VALUES (10, 'MRN-1010', 1990, 'Male', 'AB+');
 
 -- Q6: Update Patient Details
 -- Use case: Update Patient Details
@@ -57,7 +57,7 @@ WHERE patient_id = 2;
 -- Tables involved: 1 (Patient)
 -- Description: Remove a patient record.
 DELETE FROM Patient
-WHERE patient_id = 10;
+WHERE patient_id = 9;
 
 -- Q8: List Doctors Treating a Specific Patient
 -- Use case: View Patient Details / Doctor-Patient mapping
@@ -71,7 +71,7 @@ WHERE pd.patient_id = 1;
 -- Q9: Patients With a Specific Condition
 -- Use case: Run Analytics – condition-based patient list
 -- Tables involved: 2 (Patient, PatientCondition)
--- Description: All patients diagnosed with condition 1.
+-- Description: All patients diagnosed with condition 1 (hypertension).
 SELECT p.patient_id, p.gender, p.birth_year
 FROM Patient p
 JOIN PatientCondition pc ON p.patient_id = pc.patient_id
@@ -109,7 +109,7 @@ WHERE d.doctor_id = 1;
 -- Use case: Run Analytics – hospital census
 -- Tables involved: 3 (Patient, PatientHospital, Hospital)
 -- Description: List patients associated with hospital 1.
-SELECT p.patient_id, p.gender, p.birth_year
+SELECT p.patient_id, p.medical_record_number, p.gender, p.birth_year
 FROM Patient p
 JOIN PatientHospital ph ON p.patient_id = ph.patient_id
 JOIN Hospital h        ON ph.hospital_id = h.hospital_id
@@ -259,7 +259,7 @@ JOIN Condition c            ON pc.condition_id = c.condition_id
 JOIN PatientImmunization pi ON p.patient_id = pi.patient_id
 JOIN Vaccine v              ON pi.vaccine_id = v.vaccine_id
 WHERE c.name = 'Asthma'
-  AND v.name = 'Influenza';
+  AND v.name = 'Influenza (Flu Shot)';
 
 -- Q26: Doctors Whose Patients Are Hospitalized in a Specific City
 -- Use case: Run Analytics – regional doctor involvement
@@ -273,7 +273,7 @@ FROM Doctor d
 JOIN PatientDoctor pd   ON d.doctor_id = pd.doctor_id
 JOIN PatientHospital ph ON pd.patient_id = ph.patient_id
 JOIN Hospital h         ON ph.hospital_id = h.hospital_id
-WHERE h.city = 'Los Angeles';
+WHERE h.city = 'Merced';
 
 -- Q27: Average Number of Medications Per Patient Per Hospital
 -- Use case: Run Analytics – medication load by hospital
