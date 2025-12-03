@@ -1,0 +1,3 @@
+[submodule "hospital-system"]
+	path = hospital-system
+	url = https://github.com/varshaverse/phase3-hospital-system.git
