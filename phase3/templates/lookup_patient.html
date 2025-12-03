@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Lookup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <style>
+        .lookup-container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        .lookup-title {
+            font-size: 28px;
+            color: #0f8975;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-card {
+            margin-top: 25px;
+            background: #f9fffd;
+            padding: 20px;
+            border-left: 6px solid #0f8975;
+            border-radius: 10px;
+        }
+        .no-result {
+            margin-top: 20px;
+            color: red;
+            text-align: center;
+            font-size: 18px;
+        }
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #0f8975;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #0c6f5e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="lookup-container">
+
+    <div class="lookup-title">🔍 Patient Lookup</div>
+
+    <form method="POST" style="text-align:center;">
+        <input type="text" name="mrn" placeholder="Enter Medical Record Number" required>
+        <br>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if patient %}
+    <div class="result-card">
+        <h2 style="color:#0f8975;">Patient Found</h2>
+
+        <p><strong>MRN:</strong> {{ patient.medical_record_number }}</p>
+        <p><strong>Birth Year:</strong> {{ patient.birth_year }}</p>
+        <p><strong>Gender:</strong> {{ patient.gender }}</p>
+        <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
+    </div>
+    {% endif %}
+
+    {% if patient is none and request.method == 'POST' %}
+    <div class="no-result">❌ No patient found with that MRN.</div>
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

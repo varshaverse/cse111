@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Patient</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <style>
+        .delete-container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        .title {
+            font-size: 28px;
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .warning-text {
+            color: #b00000;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .success {
+            margin-top: 20px;
+            background: #ffecec;
+            padding: 15px;
+            border-left: 6px solid #d9534f;
+            border-radius: 8px;
+            color: #b00000;
+            font-size: 18px;
+            text-align: center;
+        }
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #0f8975;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #0c6f5e;
+        }
+        label {
+            font-weight: bold;
+            color: #0f8975;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="delete-container">
+
+    <div class="title">🗑 Delete Patient</div>
+
+    <p class="warning-text">
+        ⚠️ Warning: This action is permanent and cannot be undone.
+    </p>
+
+    <form method="POST">
+
+        <label>Patient MRN:</label><br>
+        <input type="text" name="mrn" required>
+        <br><br>
+
+        <button style="background-color:#d9534f; font-size:18px; padding:12px 25px;">
+            Delete Patient
+        </button>
+
+    </form>
+
+    {% if message %}
+    <div class="success">{{ message }}</div>
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
