@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browse Tables</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .browse-container {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            margin-top: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            font-size: 30px;
+            color: #0f8975;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            padding: 12px 20px;
+            background-color: #0f8975;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+        }
+
+        .submit-btn:hover {
+            background-color: #0c6f5e;
+        }
+
+        .table-title {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #0f8975;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            background: #f8fffd;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        th {
+            background-color: #0f8975;
+            color: white;
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #e6fbf6;
+        }
+
+        .scroll-box {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: 1px solid #cceee8;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #0f8975;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #0c6f5e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="browse-container">
+
+    <div class="title">📋 Browse Database Tables</div>
+
+    <!-- Form to choose table -->
+    <form method="POST" style="text-align:center;">
+        <select name="table_name" required>
+            <option value="">-- Select a Table --</option>
+
+            {% for t in tables %}
+                <option value="{{ t }}"
+                {% if selected == t %} selected {% endif %}>
+                    {{ t }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <button class="submit-btn">View Table</button>
+    </form>
+
+
+    {% if table_data %}
+        <div class="table-title">{{ selected }} Table</div>
+
+        <div class="scroll-box">
+            <table>
+                <tr>
+                    {% for col in columns %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+
+                {% for row in table_data %}
+                <tr>
+                    {% for col in columns %}
+                        <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
+

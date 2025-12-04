@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Medication</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .form-container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        .title {
+            font-size: 28px;
+            color: #0f8975;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .success {
+            margin-top: 20px;
+            background: #e0fff4;
+            padding: 15px;
+            border-left: 6px solid #0f8975;
+            border-radius: 8px;
+            color: #0c6f5e;
+            font-size: 18px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            color: #0f8975;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div class="title">💊 Add Medication to Patient</div>
+
+    <form method="POST">
+        <label>Patient MRN:</label><br>
+        <input type="text" name="mrn" required><br><br>
+
+        <label>Existing Medication:</label><br>
+        <select name="medication_id">
+            <option value="">-- Select Medication --</option>
+            {% for m in medications %}
+                <option value="{{ m.medication_id }}">{{ m.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Or create new medication:</label><br>
+        <input type="text" name="new_medication_name" placeholder="e.g. Metformin 500mg"><br><br>
+
+        <label>Prescription Date (YYYY-MM-DD):</label><br>
+        <input type="text" name="prescription_date" placeholder="Leave blank for today"><br><br>
+
+        <button type="submit">Add Medication</button>
+    </form>
+
+    {% if message %}
+    <div class="success">{{ message }}</div>
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+</div>
+
+</body>
+</html>

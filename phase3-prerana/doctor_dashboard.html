@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .header-card {
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header-title {
+            font-size: 30px;
+            color: #0f8975;
+            margin-bottom: 10px;
+        }
+        .info-line {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 80%;
+            margin: auto;
+        }
+        .btn-large {
+            padding: 20px;
+            background-color: #0f8975;
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            transition: 0.2s ease;
+        }
+        .btn-large:hover {
+            background-color: #0c6f5e;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TEAL LOGOUT BAR (top-left) -->
+<div style="
+    background-color:#0f8975;
+    padding:12px;
+    width:120px;
+    border-radius:0 0 10px 0;
+">
+    <a href="/logout" style="
+        color:white;
+        font-size:18px;
+        font-weight:bold;
+        text-decoration:none;
+    ">⬅ Logout</a>
+</div>
+
+<!-- DOCTOR INFO CARD -->
+<div class="header-card">
+    <div class="header-title">
+        Welcome, {{ doctor.name }}!
+    </div>
+
+    <div class="info-line"><strong>Doctor ID:</strong> {{ doctor.doctor_id }}</div>
+    <div class="info-line"><strong>Department:</strong> {{ doctor.specialty }}</div>
+    <div class="info-line"><strong>Hospital:</strong> {{ hospital.name }} ({{ hospital.city }})</div>
+</div>
+
+<!-- ACTION BUTTONS -->
+<h2 style="text-align:center; color:#0f8975;">Available Actions</h2>
+
+<div class="btn-grid">
+
+    <a href="/lookup_patient" class="btn-large">🔍 Patient Lookup</a>
+    <a href="/add_patient" class="btn-large">➕ Add Patient</a>
+
+    <a href="/update_patient" class="btn-large">✏️ Update Patient's Basic Info</a>
+
+    <a href="/delete_patient" class="btn-large">🗑 Delete Patient</a>
+
+    <a href="/browse_tables" class="btn-large">📋 Browse Tables</a>
+    <a href="/analytics" class="btn-large">📊 Patient Trends & Disease Insights</a>
+
+
+    <!-- NEW: add to patient history -->
+    <a href="/add_condition" class="btn-large">➕ Add Condition to Patient</a>
+    <a href="/add_medication" class="btn-large">💊 Add Medication to Patient</a>
+
+    <a href="/add_vaccine" class="btn-large">💉 Add Vaccine to Patient</a>
+</div>
+
+</body>
+</html>
+
+

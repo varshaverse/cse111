@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Condition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .form-container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        .title {
+            font-size: 28px;
+            color: #0f8975;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .success {
+            margin-top: 20px;
+            background: #e0fff4;
+            padding: 15px;
+            border-left: 6px solid #0f8975;
+            border-radius: 8px;
+            color: #0c6f5e;
+            font-size: 18px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            color: #0f8975;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div class="title">➕ Add Condition to Patient</div>
+
+    <form method="POST">
+        <label>Patient MRN:</label><br>
+        <input type="text" name="mrn" required><br><br>
+
+        <label>Existing Condition:</label><br>
+        <select name="condition_id">
+            <option value="">-- Select Condition --</option>
+            {% for c in conditions %}
+                <option value="{{ c.condition_id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Or create new condition:</label><br>
+        <input type="text" name="new_condition_name" placeholder="e.g. Chronic Migraine"><br><br>
+
+        <label>Diagnosis Date (YYYY-MM-DD):</label><br>
+        <input type="text" name="diagnosis_date" placeholder="Leave blank for today"><br><br>
+
+        <button type="submit">Add Condition</button>
+    </form>
+
+    {% if message %}
+    <div class="success">{{ message }}</div>
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+</div>
+
+</body>
+</html>
