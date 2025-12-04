@@ -82,13 +82,14 @@ body {
 /* header card */
 
 .dashboard-header {
-    max-width: 1100px;
-    margin: 70px auto 25px auto;
+    width: 100%;                 /* fill the page-container */
     background: #ffffff;
-    padding: 22px 30px;
-    border-radius: 18px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    padding: 24px 32px;
+    margin: 20px 0 24px 0;       /* no auto-centering here */
 }
+
 
 .dashboard-greeting {
     font-size: 26px;
@@ -197,22 +198,23 @@ body {
 /* =======================
    SPLIT ACTIONS LAYOUT
    ======================= */
+/* =======================
+   SPLIT ACTIONS LAYOUT (original look, aligned)
+   ======================= */
 
 .actions-split {
-    max-width: 1100px;
-    margin: 0 auto;
-    margin-top: 10px;
+    margin-top: 16px;
     display: flex;
     gap: 24px;
     align-items: stretch;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-wrap: nowrap;
 }
 
-/* Left analytics panel */
-
+/* Left analytics panel – big featured card */
 .analytics-panel {
     flex: 1.2;
-    min-width: 280px;
+    min-width: 320px;
     background: linear-gradient(135deg, #0f8975 0%, #12a68a 40%, #f8fffd 100%);
     color: #ffffff;
     text-decoration: none;
@@ -279,11 +281,10 @@ body {
     background: rgba(255, 255, 255, 0.16);
 }
 
-/* Right column with action buttons */
-
+/* Right column – tall stack of buttons */
 .actions-right {
     flex: 1;
-    min-width: 260px;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -293,19 +294,49 @@ body {
     width: 100%;
 }
 
-/* Make it stack on small screens */
-
+/* Mobile: stack them vertically */
 @media (max-width: 800px) {
     .actions-split {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .analytics-panel {
-        order: 1;
-    }
-
-    .actions-right {
-        order: 2;
+        margin-bottom: 16px;
     }
 }
+
+/* Wrapper that controls alignment for header + content */
+.page-container {
+    max-width: 1150px;   /* controls total width; tweak if you want */
+    margin: 0 auto;      /* centers everything */
+    padding: 20px 20px 40px 20px;
+}
+
+
+/* Fix grid spacing */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 40px;
+    align-items: start;
+}
+
+.page-container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 20px 20px 40px;
+}
+
+.dashboard-header {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    padding: 24px 32px;
+    margin: 20px 0 24px 0;
+}
+
+
+
 
