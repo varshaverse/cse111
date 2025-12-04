@@ -9,7 +9,7 @@
 
 <!-- TEAL LOGOUT BAR (top-left) -->
 <div class="top-logout-bar">
-    <a href="/logout" class="logout-link">⬅ Logout</a>
+    <a href="/logout" class="logout-link">Logout</a>
 </div>
 
 <!-- DOCTOR INFO CARD -->
@@ -25,60 +25,71 @@
     </div>
 </div>
 
-<!-- ACTION BUTTONS -->
 <h2 class="actions-title">Available Actions</h2>
 
-<div class="btn-grid dashboard-grid">
+<!-- SPLIT LAYOUT -->
+<div class="actions-split">
 
-    <a href="/lookup_patient" class="btn-large">
-        <span></span>
-        <span>Patient Lookup</span>
+    <!-- LEFT: ANALYTICS PANEL (no “button”, whole card is clickable) -->
+    <a href="/analytics" class="analytics-panel">
+        <div class="analytics-panel-header">
+            <div class="analytics-badge">Analytics</div>
+            <div class="analytics-title">Patient Trends &amp; Disease Insights</div>
+        </div>
+
+        <p class="analytics-text">
+            View disease prevalence, vaccine uptake, age distributions, and condition
+            statistics across your patient population.
+        </p>
+
+        <ul class="analytics-list">
+            <li>Top conditions and vaccine usage</li>
+            <li>Age and gender patterns per condition</li>
+            <li>Most common conditions per hospital</li>
+        </ul>
+
+        <div class="analytics-cta">Open Analytics ➜</div>
     </a>
 
-    <a href="/add_patient" class="btn-large">
-        <span></span>
-        <span>Add Patient</span>
-    </a>
+    <!-- RIGHT: OTHER ACTION BUTTONS -->
+    <div class="actions-right">
+        <a href="/lookup_patient" class="btn-large">
+            Patient Lookup
+        </a>
 
-    <a href="/update_patient" class="btn-large">
-        <span></span>
-        <span>Update Patient's Basic Information</span>
-    </a>
+        <a href="/add_patient" class="btn-large">
+            Add Patient
+        </a>
 
-    <a href="/delete_patient" class="btn-large btn-danger">
-        <span></span>
-        <span>Delete Patient Record</span>
-    </a>
+        <a href="/update_patient" class="btn-large">
+            Update Patient's Basic Info
+        </a>
 
-    <a href="/browse_tables" class="btn-large">
-        <span></span>
-        <span>Browse Tables</span>
-    </a>
+        <a href="/delete_patient" class="btn-large">
+            Delete Patient
+        </a>
 
-    <a href="/analytics" class="btn-large">
-        <span></span>
-        <span>Patient Trends &amp; Disease Insights</span>
-    </a>
+        <a href="/browse_tables" class="btn-large">
+            Browse Tables
+        </a>
 
-    <a href="/add_condition" class="btn-large">
-        <span></span>
-        <span>Add Condition to Patient Records</span>
-    </a>
+        <a href="/add_condition" class="btn-large">
+            Add Condition to Patient
+        </a>
 
-    <a href="/add_medication" class="btn-large">
-        <span></span>
-        <span>Add Medication to Patient Records</span>
-    </a>
+        <a href="/add_medication" class="btn-large">
+            Add Medication to Patient
+        </a>
 
-    <a href="/add_vaccine" class="btn-large">
-        <span></span>
-        <span>Add Vaccine to Patient Records</span>
-    </a>
-
+        <a href="/add_vaccine" class="btn-large">
+            Add Vaccine to Patient
+        </a>
+    </div>
 </div>
 
 </body>
 </html>
+
 
 
 
