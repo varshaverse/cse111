@@ -12,83 +12,89 @@
     <a href="/logout" class="logout-link">Logout</a>
 </div>
 
-<!-- DOCTOR INFO CARD -->
-<div class="dashboard-header">
-    <div class="dashboard-greeting">
-        Welcome, <span class="doctor-name">{{ doctor.name }}</span>!
-    </div>
+<!-- PAGE CONTAINER (alignment wrapper) -->
+<div class="page-container">
 
-    <div class="dashboard-meta">
-        <div><span class="meta-label">Doctor ID:</span> {{ doctor.doctor_id }}</div>
-        <div><span class="meta-label">Department:</span> {{ doctor.specialty }}</div>
-        <div><span class="meta-label">Hospital:</span> {{ hospital.name }} ({{ hospital.city }})</div>
-    </div>
-</div>
-
-<h2 class="actions-title">Available Actions</h2>
-
-<!-- SPLIT LAYOUT -->
-<div class="actions-split">
-
-    <!-- LEFT: ANALYTICS PANEL (no “button”, whole card is clickable) -->
-    <a href="/analytics" class="analytics-panel">
-        <div class="analytics-panel-header">
-            <div class="analytics-badge">Analytics</div>
-            <div class="analytics-title">Patient Trends &amp; Disease Insights</div>
+    <!-- DOCTOR INFO CARD -->
+    <div class="dashboard-header">
+        <div class="dashboard-greeting">
+            Welcome, <span class="doctor-name">{{ doctor.name }}</span>!
         </div>
 
-        <p class="analytics-text">
-            View disease prevalence, vaccine uptake, age distributions, and condition
-            statistics across your patient population.
-        </p>
-
-        <ul class="analytics-list">
-            <li>Top conditions and vaccine usage</li>
-            <li>Age and gender patterns per condition</li>
-            <li>Most common conditions per hospital</li>
-        </ul>
-
-        <div class="analytics-cta">Open Analytics ➜</div>
-    </a>
-
-    <!-- RIGHT: OTHER ACTION BUTTONS -->
-    <div class="actions-right">
-        <a href="/lookup_patient" class="btn-large">
-            Patient Lookup
-        </a>
-
-        <a href="/add_patient" class="btn-large">
-            Add Patient
-        </a>
-
-        <a href="/update_patient" class="btn-large">
-            Update Patient's Basic Info
-        </a>
-
-        <a href="/delete_patient" class="btn-large">
-            Delete Patient
-        </a>
-
-        <a href="/browse_tables" class="btn-large">
-            Browse Tables
-        </a>
-
-        <a href="/add_condition" class="btn-large">
-            Add Condition to Patient
-        </a>
-
-        <a href="/add_medication" class="btn-large">
-            Add Medication to Patient
-        </a>
-
-        <a href="/add_vaccine" class="btn-large">
-            Add Vaccine to Patient
-        </a>
+        <div class="dashboard-meta">
+            <div><span class="meta-label">Doctor ID:</span> {{ doctor.doctor_id }}</div>
+            <div><span class="meta-label">Department:</span> {{ doctor.specialty }}</div>
+            <div><span class="meta-label">Hospital:</span> {{ hospital.name }} ({{ hospital.city }})</div>
+        </div>
     </div>
-</div>
+
+    <!-- SPLIT LAYOUT -->
+    <div class="actions-split">
+
+        <!-- LEFT: ANALYTICS PANEL -->
+        <a href="/analytics" class="analytics-panel">
+            <div class="analytics-panel-header">
+                <div class="analytics-badge">Analytics</div>
+                <div class="analytics-title">Patient Trends &amp; Disease Insights</div>
+            </div>
+
+            <p class="analytics-text">
+                View disease prevalence, vaccine uptake, age distributions, and condition
+                statistics across your patient population.
+            </p>
+
+            <ul class="analytics-list">
+                <li>Top conditions and vaccine usage</li>
+                <li>Age and gender patterns per condition</li>
+                <li>Most common conditions per hospital</li>
+            </ul>
+
+            <div class="analytics-cta">Open Analytics ➜</div>
+        </a>
+
+        <!-- RIGHT: OTHER ACTION BUTTONS -->
+        <div class="actions-right">
+
+            <a href="/lookup_patient" class="btn-large">
+                Patient Lookup
+            </a>
+
+            <a href="/add_patient" class="btn-large">
+                Add Patient
+            </a>
+
+            <a href="/update_patient" class="btn-large">
+                Update Patient's Basic Info
+            </a>
+
+            <a href="/delete_patient" class="btn-large">
+                Delete Patient
+            </a>
+
+            <a href="/browse_tables" class="btn-large">
+                Browse Tables
+            </a>
+
+            <a href="/add_condition" class="btn-large">
+                Add Condition to Patient
+            </a>
+
+            <a href="/add_medication" class="btn-large">
+                Add Medication to Patient
+            </a>
+
+            <a href="/add_vaccine" class="btn-large">
+                Add Vaccine to Patient
+            </a>
+        </div>
+
+    </div> <!-- END actions-split -->
+
+</div> <!-- END page-container -->
 
 </body>
 </html>
+
 
 
 
