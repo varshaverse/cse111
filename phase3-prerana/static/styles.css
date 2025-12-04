@@ -48,3 +48,264 @@ button:hover, .btn:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     margin-top: 20px;
 }
+
+/* =======================
+   DASHBOARD LAYOUT & STYLE
+   ======================= */
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top left, #e6fbf6 0, #e8f7f5 40%, #d9f0ee 100%);
+    margin: 0;
+    padding: 30px 20px 40px;
+}
+
+/* top logout bar */
+
+.top-logout-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 10px 16px;
+    background-color: #0f8975;
+    border-radius: 0 0 12px 0;
+    z-index: 10;
+}
+
+.logout-link {
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* header card */
+
+.dashboard-header {
+    max-width: 1100px;
+    margin: 70px auto 25px auto;
+    background: #ffffff;
+    padding: 22px 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-greeting {
+    font-size: 26px;
+    font-weight: 600;
+    color: #0f8975;
+    margin-bottom: 8px;
+}
+
+.doctor-name {
+    color: #0b5f50;
+}
+
+.dashboard-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 35px;
+    font-size: 16px;
+    color: #333;
+}
+
+.meta-label {
+    font-weight: 600;
+    color: #0f8975;
+}
+
+/* actions title */
+
+.actions-title {
+    text-align: center;
+    color: #0f8975;
+    font-size: 24px;
+    margin-top: 20px;
+    margin-bottom: 18px;
+}
+
+/* action buttons grid */
+
+.dashboard-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+/* individual big buttons */
+
+.btn-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 22px 26px;
+    background-color: #0f8975;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 16px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-large span:first-child {
+    font-size: 22px;
+}
+
+.btn-large:hover {
+    background-color: #0c6f5e;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16);
+}
+
+/* subtle red tint for destructive action */
+
+.btn-danger {
+    background-color: #c94b4b;
+}
+
+.btn-danger:hover {
+    background-color: #a63d3d;
+}
+
+/* responsive tweak */
+
+@media (max-width: 600px) {
+    .dashboard-header {
+        margin-top: 90px;
+        padding: 18px 20px;
+    }
+
+    .dashboard-meta {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .btn-large {
+        font-size: 16px;
+        padding: 18px 20px;
+    }
+}
+
+/* =======================
+   SPLIT ACTIONS LAYOUT
+   ======================= */
+
+.actions-split {
+    max-width: 1100px;
+    margin: 0 auto;
+    margin-top: 10px;
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+/* Left analytics panel */
+
+.analytics-panel {
+    flex: 1.2;
+    min-width: 280px;
+    background: linear-gradient(135deg, #0f8975 0%, #12a68a 40%, #f8fffd 100%);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 22px 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.analytics-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.02);
+}
+
+.analytics-panel-header {
+    margin-bottom: 10px;
+}
+
+.analytics-badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+}
+
+.analytics-title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.analytics-text {
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 8px 0 10px 0;
+    color: #eafcf8;
+}
+
+.analytics-list {
+    margin: 0 0 14px 18px;
+    padding: 0;
+    font-size: 13px;
+    color: #eafcf8;
+}
+
+.analytics-list li {
+    margin-bottom: 4px;
+}
+
+.analytics-cta {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: auto;
+    align-self: flex-start;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+/* Right column with action buttons */
+
+.actions-right {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.actions-right .btn-large {
+    width: 100%;
+}
+
+/* Make it stack on small screens */
+
+@media (max-width: 800px) {
+    .actions-split {
+        flex-direction: column;
+    }
+
+    .analytics-panel {
+        order: 1;
+    }
+
+    .actions-right {
+        order: 2;
+    }
+}
+
