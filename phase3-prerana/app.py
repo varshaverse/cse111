@@ -491,6 +491,9 @@ def add_vaccine():
 # -------------------------------
 # BROWSE TABLES
 # -------------------------------
+# -------------------------------
+# BROWSE TABLES
+# -------------------------------
 TABLE_WHITELIST = [
     "Hospital",
     "Doctor",
@@ -520,7 +523,7 @@ def browse_tables():
         selected = request.form["table_name"]
         conn = get_db()
 
-        # Special JOIN logic for more informative views
+        # More informative + sorted views for relationship tables
         if selected == "PatientHospital":
             sql = """
                 SELECT
@@ -532,6 +535,10 @@ def browse_tables():
                 FROM PatientHospital ph
                 JOIN Patient p ON ph.patient_id = p.patient_id
                 JOIN Hospital h ON ph.hospital_id = h.hospital_id
+                ORDER BY
+                    p.medical_record_number,
+                    h.name
+
             """
         elif selected == "PatientCondition":
             sql = """
@@ -545,6 +552,10 @@ def browse_tables():
                 JOIN Patient p ON pc.patient_id = p.patient_id
                 JOIN "Condition" c ON pc.condition_id = c.condition_id
                 JOIN Doctor d ON pc.doctor_id = d.doctor_id
+                ORDER BY
+                    p.medical_record_number,
+                    c.name,
+                    pc.diagnosis_date DESC
             """
         elif selected == "PatientMedication":
             sql = """
@@ -558,6 +569,10 @@ def browse_tables():
                 JOIN Patient p ON pm.patient_id = p.patient_id
                 JOIN Medication m ON pm.medication_id = m.medication_id
                 JOIN Doctor d ON pm.doctor_id = d.doctor_id
+                ORDER BY
+                    p.medical_record_number,
+                    pm.prescription_date DESC,
+                    m.name
             """
         elif selected == "PatientImmunization":
             sql = """
@@ -569,6 +584,10 @@ def browse_tables():
                 FROM PatientImmunization pi
                 JOIN Patient p ON pi.patient_id = p.patient_id
                 JOIN Vaccine v ON pi.vaccine_id = v.vaccine_id
+                ORDER BY
+                    p.medical_record_number,
+                    pi.admin_date DESC,
+                    v.name
             """
         elif selected == "MedicationCondition":
             sql = """
@@ -580,6 +599,9 @@ def browse_tables():
                 FROM MedicationCondition mc
                 JOIN Medication m ON mc.medication_id = m.medication_id
                 JOIN "Condition" c ON mc.condition_id = c.condition_id
+                ORDER BY
+                    m.name,
+                    c.name
             """
         elif selected == "PatientDoctor":
             sql = """
@@ -595,10 +617,12 @@ def browse_tables():
                 JOIN Patient p ON pd.patient_id = p.patient_id
                 JOIN Doctor d ON pd.doctor_id = d.doctor_id
                 JOIN Hospital h ON d.hospital_id = h.hospital_id
+                ORDER BY
+                    d.name,
+                    p.medical_record_number
             """
-
         elif selected == "Doctor":
-            # Hide password; show hospital details instead
+            # Hide password; show hospital info instead
             sql = """
                 SELECT
                     d.doctor_id,
@@ -608,9 +632,11 @@ def browse_tables():
                     h.city AS hospital_city
                 FROM Doctor d
                 JOIN Hospital h ON d.hospital_id = h.hospital_id
+                ORDER BY
+                    d.name
             """
         else:
-            # Default: simple SELECT *
+            # Default: simple SELECT * (with proper quoting for Condition)
             if selected == "Condition":
                 sql_table = '"Condition"'
             else:
@@ -630,6 +656,10 @@ def browse_tables():
     )
 
 
+
+# -------------------------------
+# ANALYTICS
+# -------------------------------
 # -------------------------------
 # ANALYTICS
 # -------------------------------
@@ -640,38 +670,221 @@ def analytics():
 
     conn = get_db()
 
+    # Simple "most common" stats for potential cards (you can ignore in HTML if not used)
     common_condition = conn.execute(
-        'SELECT c.name, COUNT(*) AS total '
-        'FROM PatientCondition pc '
-        'JOIN "Condition" c ON pc.condition_id = c.condition_id '
-        'GROUP BY c.condition_id '
-        'ORDER BY total DESC '
-        'LIMIT 1'
+        '''
+        SELECT c.name, COUNT(*) AS total
+        FROM PatientCondition pc
+        JOIN "Condition" c ON pc.condition_id = c.condition_id
+        GROUP BY c.condition_id
+        ORDER BY total DESC
+        LIMIT 1
+        '''
     ).fetchone()
 
     common_blood = conn.execute(
-        "SELECT blood_type, COUNT(*) AS total "
-        "FROM Patient "
-        "GROUP BY blood_type "
-        "ORDER BY total DESC "
-        "LIMIT 1"
+        '''
+        SELECT blood_type, COUNT(*) AS total
+        FROM Patient
+        GROUP BY blood_type
+        ORDER BY total DESC
+        LIMIT 1
+        '''
     ).fetchone()
 
     common_vaccine = conn.execute(
-        "SELECT v.name, COUNT(*) AS total "
-        "FROM PatientImmunization pi "
-        "JOIN Vaccine v ON pi.vaccine_id = v.vaccine_id "
-        "GROUP BY v.vaccine_id "
-        "ORDER BY total DESC "
-        "LIMIT 1"
+        '''
+        SELECT v.name, COUNT(*) AS total
+        FROM PatientImmunization pi
+        JOIN Vaccine v ON pi.vaccine_id = v.vaccine_id
+        GROUP BY v.vaccine_id
+        ORDER BY total DESC
+        LIMIT 1
+        '''
     ).fetchone()
+
+    # TOP 5 conditions by distinct patients (bar chart)
+    cond_rows = conn.execute(
+        '''
+        SELECT c.name AS condition_name,
+               COUNT(DISTINCT pc.patient_id) AS total_patients
+        FROM PatientCondition pc
+        JOIN "Condition" c ON pc.condition_id = c.condition_id
+        GROUP BY c.condition_id
+        ORDER BY total_patients DESC
+        LIMIT 5
+        '''
+    ).fetchall()
+    cond_labels = [row["condition_name"] for row in cond_rows]
+    cond_values = [row["total_patients"] for row in cond_rows]
+
+    # Most prevalent gender per condition (table)
+    gender_top = conn.execute(
+        '''
+        SELECT condition_name, gender, total
+        FROM (
+            SELECT
+                c.name AS condition_name,
+                p.gender,
+                COUNT(*) AS total,
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.condition_id
+                    ORDER BY COUNT(*) DESC
+                ) AS rn
+            FROM PatientCondition pc
+            JOIN Patient p ON pc.patient_id = p.patient_id
+            JOIN "Condition" c ON pc.condition_id = c.condition_id
+            GROUP BY c.condition_id, p.gender
+        )
+        WHERE rn = 1
+        ORDER BY total DESC;
+        '''
+    ).fetchall()
+
+    # Most prevalent blood type per condition (table)
+    blood_top = conn.execute(
+        '''
+        SELECT condition_name, blood_type, total
+        FROM (
+            SELECT
+                c.name AS condition_name,
+                p.blood_type,
+                COUNT(*) AS total,
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.condition_id
+                    ORDER BY COUNT(*) DESC
+                ) AS rn
+            FROM PatientCondition pc
+            JOIN Patient p ON pc.patient_id = p.patient_id
+            JOIN "Condition" c ON pc.condition_id = c.condition_id
+            GROUP BY c.condition_id, p.blood_type
+        )
+        WHERE rn = 1
+        ORDER BY total DESC;
+        '''
+    ).fetchall()
+
+    # Vaccine uptake: how many patients got each vaccine (bar chart)
+    vaccine_rows = conn.execute(
+        '''
+        SELECT v.name AS vaccine_name,
+               COUNT(DISTINCT pi.patient_id) AS total_patients
+        FROM PatientImmunization pi
+        JOIN Vaccine v ON pi.vaccine_id = v.vaccine_id
+        GROUP BY v.vaccine_id
+        ORDER BY total_patients DESC;
+        '''
+    ).fetchall()
+    vaccine_labels = [row["vaccine_name"] for row in vaccine_rows]
+    vaccine_values = [row["total_patients"] for row in vaccine_rows]
+
+    # Age groups from birth_year (pie chart)
+    all_birth_years = conn.execute(
+        '''
+        SELECT birth_year
+        FROM Patient
+        WHERE birth_year IS NOT NULL
+        '''
+    ).fetchall()
+
+    from datetime import date
+    current_year = date.today().year
+
+    age_bins = {
+        "0-17": 0,
+        "18-34": 0,
+        "35-49": 0,
+        "50-64": 0,
+        "65+": 0,
+    }
+
+    for row in all_birth_years:
+        by = row["birth_year"]
+        if not by:
+            continue
+        age = current_year - by
+        if age <= 17:
+            age_bins["0-17"] += 1
+        elif age <= 34:
+            age_bins["18-34"] += 1
+        elif age <= 49:
+            age_bins["35-49"] += 1
+        elif age <= 64:
+            age_bins["50-64"] += 1
+        else:
+            age_bins["65+"] += 1
+
+    age_labels = list(age_bins.keys())
+    age_values = list(age_bins.values())
+
+    # 🔹 NEW: Average age per condition (bar chart)
+    avg_age_rows = conn.execute(
+        """
+        SELECT
+            c.name AS condition_name,
+            AVG(CAST(strftime('%Y','now') AS INTEGER) - p.birth_year) AS avg_age
+        FROM PatientCondition pc
+        JOIN Patient p ON pc.patient_id = p.patient_id
+        JOIN "Condition" c ON pc.condition_id = c.condition_id
+        WHERE p.birth_year IS NOT NULL
+        GROUP BY c.condition_id
+        ORDER BY avg_age DESC;
+        """
+    ).fetchall()
+    avg_age_labels = [row["condition_name"] for row in avg_age_rows]
+    # round to one decimal for nicer display
+    avg_age_values = [round(row["avg_age"], 1) for row in avg_age_rows]
+
+    # 🔹 NEW: Most common condition per hospital (table)
+    hospital_top = conn.execute(
+        """
+        WITH cond_counts AS (
+            SELECT
+                h.name AS hospital_name,
+                c.name AS condition_name,
+                COUNT(DISTINCT ph.patient_id) AS total
+            FROM PatientHospital ph
+            JOIN PatientCondition pc ON ph.patient_id = pc.patient_id
+            JOIN "Condition" c ON pc.condition_id = c.condition_id
+            JOIN Hospital h ON ph.hospital_id = h.hospital_id
+            GROUP BY h.hospital_id, c.condition_id
+        ),
+        ranked AS (
+            SELECT
+                hospital_name,
+                condition_name,
+                total,
+                ROW_NUMBER() OVER (
+                    PARTITION BY hospital_name
+                    ORDER BY total DESC
+                ) AS rn
+            FROM cond_counts
+        )
+        SELECT hospital_name, condition_name, total
+        FROM ranked
+        WHERE rn = 1
+        ORDER BY hospital_name;
+        """
+    ).fetchall()
 
     return render_template(
         "analytics.html",
         common_condition=common_condition,
         common_blood=common_blood,
         common_vaccine=common_vaccine,
+        cond_labels=cond_labels,
+        cond_values=cond_values,
+        gender_top=gender_top,
+        blood_top=blood_top,
+        vaccine_labels=vaccine_labels,
+        vaccine_values=vaccine_values,
+        age_labels=age_labels,
+        age_values=age_values,
+        avg_age_labels=avg_age_labels,
+        avg_age_values=avg_age_values,
+        hospital_top=hospital_top,
     )
+
 
 
 # -------------------------------
