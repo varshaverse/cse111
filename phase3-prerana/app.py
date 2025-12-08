@@ -424,6 +424,173 @@ def add_medication():
         message=message,
     )
 
+@app.route("/delete_condition", methods=["GET", "POST"])
+def delete_condition():
+    if not require_login():
+        return redirect("/doctor_login")
+
+    patient = None
+    conditions = []
+    message = None
+
+    conn = get_db()
+
+    if request.method == "POST":
+        # If this POST has pc_id, we're deleting a specific record
+        if "pc_id" in request.form:
+            pc_id = request.form["pc_id"]
+            mrn = request.form["mrn"].strip()
+
+            conn.execute(
+                "DELETE FROM PatientCondition WHERE rowid = ?",
+                (pc_id,),
+            )
+            conn.commit()
+            message = "Condition removed from patient record."
+
+            # Re-fetch patient + remaining conditions
+            cur = conn.execute(
+                "SELECT * FROM Patient WHERE medical_record_number = ?",
+                (mrn,),
+            )
+            patient = cur.fetchone()
+
+            if patient:
+                cur = conn.execute(
+                    '''
+                    SELECT pc.rowid AS pc_id,
+                           c.name AS condition_name,
+                           pc.diagnosis_date,
+                           d.name AS doctor_name
+                    FROM PatientCondition pc
+                    JOIN "Condition" c ON pc.condition_id = c.condition_id
+                    LEFT JOIN Doctor d ON pc.doctor_id = d.doctor_id
+                    WHERE pc.patient_id = ?
+                    ORDER BY pc.diagnosis_date DESC
+                    ''',
+                    (patient["patient_id"],),
+                )
+                conditions = cur.fetchall()
+
+        # Otherwise, this POST is just searching by MRN
+        else:
+            mrn = request.form["mrn"].strip()
+
+            cur = conn.execute(
+                "SELECT * FROM Patient WHERE medical_record_number = ?",
+                (mrn,),
+            )
+            patient = cur.fetchone()
+
+            if not patient:
+                message = "No patient found with that MRN."
+            else:
+                cur = conn.execute(
+                    '''
+                    SELECT pc.rowid AS pc_id,
+                           c.name AS condition_name,
+                           pc.diagnosis_date,
+                           d.name AS doctor_name
+                    FROM PatientCondition pc
+                    JOIN "Condition" c ON pc.condition_id = c.condition_id
+                    LEFT JOIN Doctor d ON pc.doctor_id = d.doctor_id
+                    WHERE pc.patient_id = ?
+                    ORDER BY pc.diagnosis_date DESC
+                    ''',
+                    (patient["patient_id"],),
+                )
+                conditions = cur.fetchall()
+
+    return render_template(
+        "delete_condition.html",
+        patient=patient,
+        conditions=conditions,
+        message=message,
+    )
+@app.route("/delete_medication", methods=["GET", "POST"])
+def delete_medication():
+    if not require_login():
+        return redirect("/doctor_login")
+
+    patient = None
+    meds = []
+    message = None
+
+    conn = get_db()
+
+    if request.method == "POST":
+        # Deleting a specific medication entry
+        if "pm_id" in request.form:
+            pm_id = request.form["pm_id"]
+            mrn = request.form["mrn"].strip()
+
+            conn.execute(
+                "DELETE FROM PatientMedication WHERE rowid = ?",
+                (pm_id,),
+            )
+            conn.commit()
+            message = "Medication removed from patient record."
+
+            # Re-fetch patient + remaining meds
+            cur = conn.execute(
+                "SELECT * FROM Patient WHERE medical_record_number = ?",
+                (mrn,),
+            )
+            patient = cur.fetchone()
+
+            if patient:
+                cur = conn.execute(
+                    '''
+                    SELECT pm.rowid AS pm_id,
+                           m.name AS medication_name,
+                           pm.prescription_date,
+                           d.name AS doctor_name
+                    FROM PatientMedication pm
+                    JOIN Medication m ON pm.medication_id = m.medication_id
+                    LEFT JOIN Doctor d ON pm.doctor_id = d.doctor_id
+                    WHERE pm.patient_id = ?
+                    ORDER BY pm.prescription_date DESC
+                    ''',
+                    (patient["patient_id"],),
+                )
+                meds = cur.fetchall()
+
+        # Searching by MRN
+        else:
+            mrn = request.form["mrn"].strip()
+
+            cur = conn.execute(
+                "SELECT * FROM Patient WHERE medical_record_number = ?",
+                (mrn,),
+            )
+            patient = cur.fetchone()
+
+            if not patient:
+                message = "No patient found with that MRN."
+            else:
+                cur = conn.execute(
+                    '''
+                    SELECT pm.rowid AS pm_id,
+                           m.name AS medication_name,
+                           pm.prescription_date,
+                           d.name AS doctor_name
+                    FROM PatientMedication pm
+                    JOIN Medication m ON pm.medication_id = m.medication_id
+                    LEFT JOIN Doctor d ON pm.doctor_id = d.doctor_id
+                    WHERE pm.patient_id = ?
+                    ORDER BY pm.prescription_date DESC
+                    ''',
+                    (patient["patient_id"],),
+                )
+                meds = cur.fetchall()
+
+    return render_template(
+        "delete_medication.html",
+        patient=patient,
+        meds=meds,
+        message=message,
+    )
+
 
 # -------------------------------
 # ADD VACCINE TO PATIENT
