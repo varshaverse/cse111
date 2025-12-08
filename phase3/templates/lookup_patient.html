@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Patient Lookup</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
         .lookup-container {
@@ -48,6 +48,10 @@
         .back-btn:hover {
             background-color: #0c6f5e;
         }
+        h3.section-heading {
+            color: #0f8975;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -71,6 +75,63 @@
         <p><strong>Birth Year:</strong> {{ patient.birth_year }}</p>
         <p><strong>Gender:</strong> {{ patient.gender }}</p>
         <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
+
+        <hr style="margin:20px 0;">
+
+        <!-- CONDITIONS -->
+        <h3 class="section-heading">Conditions</h3>
+        {% if conditions %}
+            <ul>
+                {% for c in conditions %}
+                    <li>
+                        <strong>{{ c.condition_name }}</strong>
+                        (diagnosed {{ c.diagnosis_date }}) – {{ c.doctor_name }}
+                        {% if c.medications_for_condition %}
+                            <br>
+                            <em>Medications used for this condition:
+                                {{ c.medications_for_condition }}
+                            </em>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No documented conditions for this patient.</p>
+        {% endif %}
+
+        <!-- MEDICATIONS -->
+        <h3 class="section-heading">Medications</h3>
+        {% if medications %}
+            <ul>
+                {% for m in medications %}
+                    <li>
+                        <strong>{{ m.medication_name }}</strong>
+                        (prescribed {{ m.prescription_date }}) – {{ m.doctor_name }}
+                        {% if m.conditions_for_medication %}
+                            <br>
+                            <em>Treats: {{ m.conditions_for_medication }}</em>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No active medications found.</p>
+        {% endif %}
+
+        <!-- VACCINES -->
+        <h3 class="section-heading">Vaccines</h3>
+        {% if vaccines %}
+            <ul>
+                {% for v in vaccines %}
+                    <li>
+                        <strong>{{ v.vaccine_name }}</strong>
+                        ({{ v.admin_date }})
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No vaccine records found.</p>
+        {% endif %}
     </div>
     {% endif %}
 

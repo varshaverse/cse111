@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Browse Tables</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
         .browse-container {
@@ -128,15 +128,15 @@
         <div class="scroll-box">
             <table>
                 <tr>
-                    {% for column in table_data[0].keys() %}
-                        <th>{{ column }}</th>
+                    {% for col in columns %}
+                        <th>{{ col }}</th>
                     {% endfor %}
                 </tr>
 
                 {% for row in table_data %}
                 <tr>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
+                    {% for col in columns %}
+                        <td>{{ row[col] }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}
@@ -150,3 +150,4 @@
 
 </body>
 </html>
+
