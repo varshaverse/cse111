@@ -282,17 +282,51 @@ body {
 }
 
 /* Right column – tall stack of buttons */
+/* Right column – 2×4 grid of buttons */
 .actions-right {
     flex: 1;
-    min-width: 280px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    min-width: 420px;
+    max-width: 520px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* two equal-width columns */
+    grid-auto-rows: auto;
+
+    gap: 20px 40px;     /* row-gap 20px, column-gap 24px */
+    /*  ↑ same as: row-gap:20px; column-gap:24px; */
 }
 
-.actions-right .btn-large {
+
+
+
+.btn-large {
+    background: #0a7f71;
+    color: white;
+    padding: 18px 12px;
+    text-align: center;
+    font-size: 18px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-decoration: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     width: 100%;
+    height: 60px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+.btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.18);
+}
+
+
+
 
 /* Mobile: stack them vertically */
 @media (max-width: 800px) {
