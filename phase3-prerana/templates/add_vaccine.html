@@ -34,8 +34,23 @@
             font-weight: bold;
             color: #0f8975;
         }
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #0f8975;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #0c6f5e;
+        }
     </style>
 </head>
+
 <body>
 
 <div class="form-container">
@@ -63,7 +78,7 @@
     </form>
 
     {% if message %}
-    <div class="success">{{ message }}</div>
+        <div class="success">{{ message }}</div>
     {% endif %}
 
     <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
@@ -71,3 +86,4 @@
 
 </body>
 </html>
+

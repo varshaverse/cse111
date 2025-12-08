@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove Medication from Patient</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+<div class="card" style="max-width: 800px; margin-top: 40px;">
+    <h1>Remove Medication from Patient</h1>
+
+    <!-- MRN search form -->
+    <form method="POST" style="margin-bottom: 20px;">
+        <label>Patient Medical Record Number (MRN):</label><br>
+        <input type="text" name="mrn" required
+               value="{{ request.form.mrn if request.form.mrn else '' }}">
+        <button type="submit">Find Patient</button>
+    </form>
+
+    {% if message %}
+        <div class="info-message">{{ message }}</div>
+    {% endif %}
+
+    {% if patient %}
+        <h2>Patient: {{ patient.medical_record_number }} (ID: {{ patient.patient_id }})</h2>
+
+        {% if meds %}
+            <p>Select a medication entry to remove:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Medication</th>
+                    <th>Prescription Date</th>
+                    <th>Prescribed By</th>
+                    <th>Action</th>
+                </tr>
+                {% for row in meds %}
+                <tr>
+                    <td>{{ row.medication_name }}</td>
+                    <td>{{ row.prescription_date }}</td>
+                    <td>{{ row.doctor_name or 'Unknown' }}</td>
+                    <td>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="mrn" value="{{ patient.medical_record_number }}">
+                            <input type="hidden" name="pm_id" value="{{ row.pm_id }}">
+                            <button type="submit"
+                                    onclick="return confirm('Remove this medication from the patient record?');">
+                                Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p><em>This patient has no recorded medications.</em></p>
+        {% endif %}
+    {% endif %}
+
+    <a href="/doctor_dashboard" class="btn">Back to Dashboard</a>
+</div>
+
+</body>
+</html>
