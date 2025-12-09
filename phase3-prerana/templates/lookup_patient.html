@@ -2,19 +2,19 @@
 <html>
 <head>
     <title>Patient Lookup</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <style>
-        .lookup-container {
+        .add-container {
             width: 60%;
             margin: auto;
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             margin-top: 40px;
         }
-        .lookup-title {
+        .title {
             font-size: 28px;
             color: #0f8975;
             text-align: center;
@@ -48,6 +48,13 @@
         .back-btn:hover {
             background-color: #0c6f5e;
         }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            font-weight: bold;
+            color: #0f8975;
+        }
         h3.section-heading {
             color: #0f8975;
             margin-top: 20px;
@@ -57,13 +64,15 @@
 
 <body>
 
-<div class="lookup-container">
+<div class="add-container">
 
-    <div class="lookup-title">🔍 Patient Lookup</div>
+    <div class="title">🔍 Patient Lookup</div>
 
-    <form method="POST" style="text-align:center;">
-        <input type="text" name="mrn" placeholder="Enter Medical Record Number" required>
-        <br>
+    <form method="POST">
+        <div class="form-group">
+            <label>Medical Record Number:</label><br>
+            <input type="text" name="mrn" placeholder="Enter Medical Record Number" required>
+        </div>
         <button type="submit">Search</button>
     </form>
 
@@ -145,3 +154,4 @@
 
 </body>
 </html>
+
