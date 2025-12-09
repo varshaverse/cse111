@@ -147,29 +147,27 @@ def lookup_patient():
                 (pid,),
             ).fetchall()
 
-            # 3. medications for this patient + conditions each med treats
+            # 3. medications for this patient + the specific condition each prescription is for
             medications = conn.execute(
                 '''
                 SELECT
                     m.name AS medication_name,
                     pm.prescription_date,
                     d.name AS doctor_name,
-                    GROUP_CONCAT(DISTINCT c.name) AS conditions_for_medication
+                    c.name AS prescribed_for_condition
                 FROM PatientMedication pm
                 JOIN Medication m
                     ON pm.medication_id = m.medication_id
                 JOIN Doctor d
                     ON pm.doctor_id = d.doctor_id
-                LEFT JOIN MedicationCondition mc
-                    ON m.medication_id = mc.medication_id
                 LEFT JOIN "Condition" c
-                    ON mc.condition_id = c.condition_id
+                    ON pm.condition_id = c.condition_id
                 WHERE pm.patient_id = ?
-                GROUP BY m.medication_id, pm.prescription_date, d.name
                 ORDER BY pm.prescription_date DESC
                 ''',
                 (pid,),
             ).fetchall()
+
 
             # 4. vaccines for this patient
             vaccines = conn.execute(
@@ -202,30 +200,40 @@ def add_patient():
     if not require_login():
         return redirect("/doctor_login")
 
+    conn = get_db()
     message = None
+
     if request.method == "POST":
         mrn = request.form["mrn"].strip()
-        birth_year = request.form["birth_year"].strip()
+        birth_year = request.form["birth_year"]
         gender = request.form["gender"]
         blood_type = request.form["blood_type"]
 
-        conn = get_db()
-        cur = conn.execute(
+        # ✅ check if MRN already exists
+        existing = conn.execute(
             "SELECT 1 FROM Patient WHERE medical_record_number = ?",
-            (mrn,),
-        )
-        if cur.fetchone():
+            (mrn,)
+        ).fetchone()
+
+        if existing:
             message = "A patient with this MRN already exists."
         else:
             conn.execute(
-                "INSERT INTO Patient (medical_record_number, birth_year, gender, blood_type) "
-                "VALUES (?, ?, ?, ?)",
-                (mrn, birth_year, gender, blood_type),
+                """
+                INSERT INTO Patient
+                    (medical_record_number, birth_year, gender, blood_type)
+                VALUES (?, ?, ?, ?)
+                """,
+                (mrn, birth_year, gender, blood_type)
             )
             conn.commit()
-            message = "Patient successfully added."
+            message = "Patient added successfully."
 
-    return render_template("add_patient.html", message=message)
+    return render_template(
+        "add_patient.html",
+        message=message,
+    )
+
 
 
 # -------------------------------
@@ -373,6 +381,9 @@ def add_medication():
     all_meds = conn.execute(
         "SELECT medication_id, name FROM Medication ORDER BY name"
     ).fetchall()
+    conditions = conn.execute(
+        'SELECT condition_id, name FROM "Condition" ORDER BY name'
+    ).fetchall()
 
     message = None
     if request.method == "POST":
@@ -380,6 +391,7 @@ def add_medication():
         medication_id = request.form.get("medication_id", "").strip()
         new_med_name = request.form.get("new_medication_name", "").strip()
         prescription_date = request.form["prescription_date"].strip()
+        condition_id = request.form.get("condition_id", "").strip()
 
         if not prescription_date:
             prescription_date = date.today().isoformat()
@@ -387,6 +399,7 @@ def add_medication():
         if not medication_id and not new_med_name:
             message = "Select an existing medication or enter a new one."
         else:
+            # If a new medication name is provided, insert it and use its id
             if new_med_name:
                 cur = conn.execute(
                     "INSERT INTO Medication (name) VALUES (?)",
@@ -395,6 +408,7 @@ def add_medication():
                 conn.commit()
                 medication_id = cur.lastrowid
 
+            # Look up the patient by MRN
             cur = conn.execute(
                 "SELECT patient_id FROM Patient WHERE medical_record_number = ?",
                 (mrn,),
@@ -403,6 +417,8 @@ def add_medication():
 
             if patient is None:
                 message = "No patient found with that MRN."
+            elif not condition_id:
+                message = "Please select a condition for this medication."
             else:
                 pid = patient["patient_id"]
                 doctor_id = session["doctor_id"]
@@ -410,10 +426,10 @@ def add_medication():
                 conn.execute(
                     '''
                     INSERT INTO PatientMedication
-                        (patient_id, medication_id, prescription_date, doctor_id)
-                    VALUES (?, ?, ?, ?)
+                        (patient_id, medication_id, prescription_date, doctor_id, condition_id)
+                    VALUES (?, ?, ?, ?, ?)
                     ''',
-                    (pid, medication_id, prescription_date, doctor_id),
+                    (pid, medication_id, prescription_date, doctor_id, condition_id),
                 )
                 conn.commit()
                 message = "Medication added to patient history."
@@ -421,8 +437,13 @@ def add_medication():
     return render_template(
         "add_medication.html",
         medications=all_meds,
+        conditions=conditions,
         message=message,
     )
+    
+#----------------------
+# DELETE CONDITION
+#------------------------
 
 @app.route("/delete_condition", methods=["GET", "POST"])
 def delete_condition():
@@ -658,9 +679,7 @@ def add_vaccine():
 # -------------------------------
 # BROWSE TABLES
 # -------------------------------
-# -------------------------------
-# BROWSE TABLES
-# -------------------------------
+
 TABLE_WHITELIST = [
     "Hospital",
     "Doctor",
@@ -730,17 +749,26 @@ def browse_tables():
                     pm.patient_id,
                     p.medical_record_number,
                     m.name AS medication_name,
+                    c.name AS condition_name,
                     pm.prescription_date,
                     d.name AS doctor_name
                 FROM PatientMedication pm
-                JOIN Patient p ON pm.patient_id = p.patient_id
-                JOIN Medication m ON pm.medication_id = m.medication_id
-                JOIN Doctor d ON pm.doctor_id = d.doctor_id
+                JOIN Patient p
+                    ON pm.patient_id = p.patient_id
+                JOIN Medication m
+                    ON pm.medication_id = m.medication_id
+                JOIN Doctor d
+                    ON pm.doctor_id = d.doctor_id
+                LEFT JOIN "Condition" c
+                    ON pm.condition_id = c.condition_id
                 ORDER BY
                     p.medical_record_number,
                     pm.prescription_date DESC,
                     m.name
             """
+    
+
+
         elif selected == "PatientImmunization":
             sql = """
                 SELECT
