@@ -66,7 +66,7 @@
 
 <div class="add-container">
 
-    <div class="title">🔍 Patient Lookup</div>
+    <div class="title">Patient Lookup</div>
 
     <form method="POST">
         <div class="form-group">
@@ -147,7 +147,7 @@
     {% endif %}
 
     {% if patient is none and request.method == 'POST' %}
-    <div class="no-result">❌ No patient found with that MRN.</div>
+    <div class="no-result"> No patient found with that MRN.</div>
     {% endif %}
 
     <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
