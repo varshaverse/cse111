@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Trends & Disease Insights</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .analytics-container {
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            font-size: 32px;
+            color: #0f8975;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 22px;
+            color: #0f8975;
+            font-weight: bold;
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            max-width: 700px;
+            margin: 10px auto 30px auto;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            background: #f8fffd;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #0f8975;
+            color: white;
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #e6fbf6;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            display: inline-block;
+            text-decoration: none;
+            background-color: #0f8975;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background-color: #0c6f5e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="analytics-container">
+
+    <div class="title">📊 Patient Trends & Disease Insights</div>
+
+    <!-- Top 5 conditions bar chart -->
+    <div class="section-title">Top 5 Conditions (by Number of Patients)</div>
+    <div class="chart-wrapper">
+        <canvas id="conditionChart"></canvas>
+    </div>
+
+    <!-- Vaccine uptake bar chart -->
+    <div class="section-title">Vaccine Uptake (Patients per Vaccine)</div>
+    <div class="chart-wrapper">
+        <canvas id="vaccineChart"></canvas>
+    </div>
+
+    <!-- Age group distribution pie chart -->
+    <div class="section-title">Patient Age Distribution (by Age Group)</div>
+    <div class="chart-wrapper">
+        <canvas id="ageChart"></canvas>
+    </div>
+
+    <!-- 🔹 NEW: Average age per condition -->
+    <div class="section-title">Average Patient Age per Condition</div>
+    <div class="chart-wrapper">
+        <canvas id="avgAgeConditionChart"></canvas>
+    </div>
+
+    <!-- Most prevalent gender per condition -->
+    <div class="section-title">Most Prevalent Gender per Condition</div>
+    <table>
+        <tr>
+            <th>Condition</th>
+            <th>Gender</th>
+            <th>Number of Patients</th>
+        </tr>
+        {% for row in gender_top %}
+        <tr>
+            <td>{{ row["condition_name"] }}</td>
+            <td>{{ row["gender"] }}</td>
+            <td>{{ row["total"] }}</td>
+        </tr>
+        {% endfor %}
+        {% if not gender_top %}
+        <tr><td colspan="3">No data available.</td></tr>
+        {% endif %}
+    </table>
+
+    <!-- Most prevalent blood type per condition -->
+    <div class="section-title">Most Prevalent Blood Type per Condition</div>
+    <table>
+        <tr>
+            <th>Condition</th>
+            <th>Blood Type</th>
+            <th>Number of Patients</th>
+        </tr>
+        {% for row in blood_top %}
+        <tr>
+            <td>{{ row["condition_name"] }}</td>
+            <td>{{ row["blood_type"] }}</td>
+            <td>{{ row["total"] }}</td>
+        </tr>
+        {% endfor %}
+        {% if not blood_top %}
+        <tr><td colspan="3">No data available.</td></tr>
+        {% endif %}
+    </table>
+
+    <!-- 🔹 NEW: Most common condition per hospital -->
+    <div class="section-title">Most Common Condition per Hospital</div>
+    <table>
+        <tr>
+            <th>Hospital</th>
+            <th>Condition</th>
+            <th>Number of Patients</th>
+        </tr>
+        {% for row in hospital_top %}
+        <tr>
+            <td>{{ row["hospital_name"] }}</td>
+            <td>{{ row["condition_name"] }}</td>
+            <td>{{ row["total"] }}</td>
+        </tr>
+        {% endfor %}
+        {% if not hospital_top %}
+        <tr><td colspan="3">No data available.</td></tr>
+        {% endif %}
+    </table>
+
+    <a href="/doctor_dashboard" class="back-btn">⬅ Back to Dashboard</a>
+
+</div>
+
+<!-- Charts -->
+<script>
+    const condLabels    = {{ cond_labels    | tojson | safe }};
+    const condValues    = {{ cond_values    | tojson | safe }};
+    const vaccineLabels = {{ vaccine_labels | tojson | safe }};
+    const vaccineValues = {{ vaccine_values | tojson | safe }};
+    const ageLabels     = {{ age_labels     | tojson | safe }};
+    const ageValues     = {{ age_values     | tojson | safe }};
+    const avgAgeLabels  = {{ avg_age_labels | tojson | safe }};
+    const avgAgeValues  = {{ avg_age_values | tojson | safe }};
+
+    // Top 5 conditions bar chart
+    if (condLabels.length > 0) {
+        new Chart(
+            document.getElementById('conditionChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: condLabels,
+                    datasets: [{
+                        label: 'Number of Patients',
+                        data: condValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            }
+        );
+    }
+
+    // Vaccine uptake bar chart
+    if (vaccineLabels.length > 0) {
+        new Chart(
+            document.getElementById('vaccineChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: vaccineLabels,
+                    datasets: [{
+                        label: 'Number of Patients',
+                        data: vaccineValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            }
+        );
+    }
+
+    // Age group pie chart
+    if (ageLabels.length > 0) {
+        new Chart(
+            document.getElementById('ageChart'),
+            {
+                type: 'pie',
+                data: {
+                    labels: ageLabels,
+                    datasets: [{
+                        label: 'Patients per Age Group',
+                        data: ageValues
+                    }]
+                },
+                options: { responsive: true }
+            }
+        );
+    }
+
+    // 🔹 Average age per condition bar chart
+    if (avgAgeLabels.length > 0) {
+        new Chart(
+            document.getElementById('avgAgeConditionChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: avgAgeLabels,
+                    datasets: [{
+                        label: 'Average Age (years)',
+                        data: avgAgeValues
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        );
+    }
+</script>
+
+</body>
+</html>
+
+
