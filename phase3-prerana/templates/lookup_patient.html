@@ -88,6 +88,8 @@
         <hr style="margin:20px 0;">
 
         <!-- CONDITIONS -->
+        
+        <!-- CONDITIONS -->
         <h3 class="section-heading">Conditions</h3>
         {% if conditions %}
             <ul>
@@ -95,18 +97,15 @@
                     <li>
                         <strong>{{ c.condition_name }}</strong>
                         (diagnosed {{ c.diagnosis_date }}) – {{ c.doctor_name }}
-                        {% if c.medications_for_condition %}
-                            <br>
-                            <em>Medications used for this condition:
-                                {{ c.medications_for_condition }}
-                            </em>
-                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
             <p>No documented conditions for this patient.</p>
         {% endif %}
+
+
+
 
         <!-- MEDICATIONS -->
         <h3 class="section-heading">Medications</h3>
@@ -116,9 +115,9 @@
                     <li>
                         <strong>{{ m.medication_name }}</strong>
                         (prescribed {{ m.prescription_date }}) – {{ m.doctor_name }}
-                        {% if m.conditions_for_medication %}
+                        {% if m.prescribed_for_condition %}
                             <br>
-                            <em>Treats: {{ m.conditions_for_medication }}</em>
+                            Prescribed for: {{ m.prescribed_for_condition }}
                         {% endif %}
                     </li>
                 {% endfor %}
@@ -126,6 +125,9 @@
         {% else %}
             <p>No active medications found.</p>
         {% endif %}
+
+
+
 
         <!-- VACCINES -->
         <h3 class="section-heading">Vaccines</h3>
