@@ -1,4 +1,4 @@
-# Healthcare Analytics System
+# Patient Data Analytics System
 
 A web-based healthcare database application that allows doctors to manage patient records, including conditions, medications, vaccinations, and analytics derived from patient data.
 
