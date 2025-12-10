@@ -1,33 +1,32 @@
-Healthcare Analytics System
+# Healthcare Analytics System
 
 A web-based healthcare database application that allows doctors to manage patient records, including conditions, medications, vaccinations, and analytics derived from patient data.
 
-This project was developed as a multi-phase assignment for CSE 111, with the fully implemented system completed in Phase 3.
+This project was developed as a multi-phase assignment for **CSE 111**, with the fully implemented system completed in **Phase 3**.
 
+---
 
-Phase 3 – Final Submission
+## Phase 3 – Final Submission
 
-phase3-prerana/ contains the complete system implementation and presentation materials, including:
+The `phase3-prerana/` directory contains the complete system implementation and presentation materials, including:
 
-Flask backend (app.py)
+- Flask backend (`app.py`)
+- SQLite database (`healthcare_analytics.sqlite`)
+- HTML templates and CSS styling
+- Database creation scripts
+- Final presentation slides (`Phase 3 slides CSE 111.pdf`)
 
-SQLite database (healthcare_analytics.sqlite)
+---
 
-HTML templates and CSS styling
+## Tech Stack
 
-Database creation scripts
+- **Backend:** Python (Flask)
+- **Database:** SQLite
+- **Frontend:** HTML, CSS
 
-Final presentation slides (Phase 3 slides CSE 111.pdf)
+---
 
+## Notes
 
-Tech Stack
+Earlier project phases are included for reference in the `phase_2` and `work` folders.
 
-Backend: Python (Flask)
-
-Database: SQLite
-
-Frontend: HTML, CSS
-
-Notes
-
-Earlier project phases are included for reference in the phase_2 and work folders.
